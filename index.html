@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Herrybloxer - русский роблокс</title>
     <style>
-        html, body {
+html, body {
     margin: 0;
     padding: 0;
     height: 100%;
@@ -15,28 +15,43 @@ body {
     background: url('background.jpg') center / cover no-repeat;
     overflow-x: hidden;
 
-    display: flex;                 /* включаем flex */
-    justify-content: center;       /* по горизонтали центр */
-    align-items: center;           /* по вертикали центр */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .container {
     text-align: center;
-    transform: translateY(-60px);  /* чуть выше середины */
+    transform: translateY(-60px);
 }
 
 h1 {
-    font-size: 90px;               /* большой заголовок */
+    font-size: 90px;
     color: white;
     margin: 0;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
-p {
-    font-size: 49px;               /* текст загрузки больше */
+.loading {
+    font-size: 39px;
     color: white;
     margin-top: 15px;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
-    </style>
+
+.loading::after {
+    content: "";
+    animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+    0%   { content: ""; }
+    25%  { content: "."; }
+    50%  { content: ".."; }
+    75%  { content: "..."; }
+    100% { content: ""; }
+}
+</style>
 </head>
 <body>
     <div class="container">
@@ -45,6 +60,7 @@ p {
     </div>
 </body>
 </html>
+
 
 
 
