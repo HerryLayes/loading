@@ -14,7 +14,7 @@ html, body {
 }
 
 /* ==================== */
-/* ЭКРАН ЗАГРУЗКИ */
+/* ЗАГРУЗКА */
 /* ==================== */
 
 #loading-screen {
@@ -29,10 +29,7 @@ html, body {
     z-index: 1000;
 }
 
-.container {
-    text-align: center;
-    transform: translateY(-60px);
-}
+.container { text-align: center; transform: translateY(-60px); }
 
 .title {
     display: flex;
@@ -58,29 +55,12 @@ h1 {
     font-size: clamp(40px, 8vw, 90px);
     color: white;
     margin: 0;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
 .loading {
     font-size: clamp(20px, 4vw, 39px);
     color: white;
     margin-top: 20px;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-
-.dots span {
-    opacity: 0;
-    animation: blink 1.4s infinite;
-}
-
-.dots span:nth-child(1) { animation-delay: 0s; }
-.dots span:nth-child(2) { animation-delay: 0.2s; }
-.dots span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes blink {
-    0% { opacity: 0; }
-    50% { opacity: 1; }
-    100% { opacity: 0; }
 }
 
 /* ==================== */
@@ -102,14 +82,54 @@ h1 {
     font-size: 50px;
 }
 
+/* Профиль */
 #profile {
     position: absolute;
     top: 20px;
     right: 30px;
-    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     background: rgba(0,0,0,0.05);
-    padding: 10px 18px;
+    padding: 10px 15px;
     border-radius: 12px;
+}
+
+#edit-btn {
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 18px;
+}
+
+/* Мини-окно */
+#edit-box {
+    position: absolute;
+    top: 70px;
+    right: 30px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 200px;
+}
+
+#edit-box input {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+#edit-box button {
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #222;
+    color: white;
 }
 </style>
 </head>
@@ -123,41 +143,39 @@ h1 {
             <img src="block.png" class="logo">
             <h1>Herrybloxer</h1>
         </div>
-
-        <p class="loading">
-            Загрузка<span class="dots">
-                <span>.</span><span>.</span><span>.</span>
-            </span>
-        </p>
+        <p class="loading">Загрузка...</p>
     </div>
 </div>
 
 <!-- ГЛАВНАЯ -->
 <div id="main-content">
+
     <div id="profile">
         👤 <span id="nickname"></span>
+        <button id="edit-btn">✏</button>
+    </div>
+
+    <div id="edit-box">
+        <input type="text" id="new-nick" placeholder="Новый ник">
+        <button id="save-nick">Сохранить</button>
     </div>
 
     <div class="main-center">
         Добро пожаловать в Herrybloxer 🎮
     </div>
+
 </div>
 
-<!-- СКРИПТЫ -->
 <script>
-/* Переход */
-setTimeout(function() {
+setTimeout(() => {
     document.getElementById("loading-screen").style.opacity = "0";
-
-    setTimeout(function() {
+    setTimeout(() => {
         document.getElementById("loading-screen").style.display = "none";
         document.getElementById("main-content").style.display = "block";
     }, 500);
-
 }, 3000);
 </script>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -177,7 +195,6 @@ const db = getFirestore(app);
 let nickname = localStorage.getItem("herrybloxer_nick");
 
 if (!nickname) {
-
     const counterRef = doc(db, "global", "userCounter");
     const counterSnap = await getDoc(counterRef);
 
@@ -197,6 +214,30 @@ if (!nickname) {
 
 document.getElementById("nickname").textContent = nickname;
 
+/* ===== РЕДАКТИРОВАНИЕ НИКА ===== */
+
+const editBtn = document.getElementById("edit-btn");
+const editBox = document.getElementById("edit-box");
+const saveBtn = document.getElementById("save-nick");
+const input = document.getElementById("new-nick");
+
+editBtn.onclick = () => {
+    editBox.style.display = editBox.style.display === "flex" ? "none" : "flex";
+};
+
+saveBtn.onclick = () => {
+    const newNick = input.value.trim();
+    if (newNick.length < 3) {
+        alert("Ник должен быть минимум 3 символа!");
+        return;
+    }
+
+    nickname = newNick;
+    localStorage.setItem("herrybloxer_nick", nickname);
+    document.getElementById("nickname").textContent = nickname;
+    editBox.style.display = "none";
+    input.value = "";
+};
 </script>
 
 </body>
