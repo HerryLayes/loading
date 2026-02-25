@@ -3,162 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Herrybloxer</title>
+<title>Herrybloxer - русский роблокс</title>
 
 <style>
-html,body{
-margin:0;
-padding:0;
-height:100%;
-font-family:sans-serif;
-overflow:hidden;
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: sans-serif;
 }
 
-/* ===== LOADING ===== */
+/* ================= LOADING ================= */
 
-#loading-screen{
-position:fixed;
-width:100%;
-height:100vh;
-background:linear-gradient(135deg,#6a00ff,#a1002a);
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:1000;
-color:white;
-transition:opacity .6s ease;
+#loading-screen {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    background: url('background.jpg') center / cover no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+    z-index: 1000;
 }
 
-.loading-wrapper{
-text-align:center;
-animation:fadeIn 1s ease;
+.container {
+    text-align: center;
+    transform: translateY(-60px);
 }
 
-/* ТВОЯ КАРТИНКА */
-.logo-image{
-width:150px;
-margin:0 auto 25px;
-display:block;
-animation:spin 4s linear infinite;
-filter:drop-shadow(0 15px 30px rgba(0,0,0,.5));
+.title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
 }
 
-#loading-screen h1{
-font-size:60px;
-margin:0;
-text-shadow:0 6px 20px rgba(0,0,0,.4);
+.logo {
+    width: 90px;
+    height: 90px;
+    border-radius: 25px;
+    animation: spin 3s linear infinite;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
 
-#loading-screen p{
-font-size:22px;
-margin-top:20px;
-opacity:.85;
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
 }
 
-@keyframes spin{
-0%{transform:rotate(0)}
-100%{transform:rotate(360deg)}
+h1 {
+    font-size: clamp(40px, 8vw, 90px);
+    color: white;
+    margin: 0;
 }
 
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(20px)}
-to{opacity:1;transform:translateY(0)}
+.loading {
+    font-size: clamp(20px, 4vw, 39px);
+    color: white;
+    margin-top: 20px;
 }
 
-/* ===== MAIN ===== */
+/* ================= MAIN ================= */
 
-#main-content{
-display:none;
-height:100vh;
-background:#f5f5f5;
-position:relative;
+#main-content {
+    display: none;
+    height: 100vh;
+    background: #f5f5f5;
+    position: relative;
 }
 
-.layout{
-display:flex;
-height:100%;
-}
-
-.left{
-flex:1;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:40px;
-}
-
-.right{
-width:320px;
-padding:20px;
-}
-
-.game-card{
-background:#ddd;
-height:160px;
-border-radius:15px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-weight:bold;
-cursor:pointer;
-box-shadow:0 10px 20px rgba(0,0,0,.2);
-transition:.3s;
-}
-
-.game-card:hover{
-transform:scale(1.05);
+.center-text {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(24px, 5vw, 50px);
 }
 
 /* PROFILE */
 
-#profile{
-position:absolute;
-top:20px;
-right:20px;
-background:#eee;
-padding:8px 12px;
-border-radius:10px;
-display:flex;
-gap:6px;
-align-items:center;
+#profile {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,0,0,0.05);
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-size: 18px;
 }
 
-.verify{
-color:#1DA1F2;
-font-weight:bold;
+#edit-btn {
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 18px;
 }
 
-#edit-box{
-position:absolute;
-top:20px;
-right:200px;
-background:white;
-padding:10px;
-border-radius:10px;
-display:none;
-flex-direction:column;
-gap:8px;
-box-shadow:0 10px 20px rgba(0,0,0,.2);
+/* EDIT BOX */
+
+#edit-box {
+    position: absolute;
+    top: 20px;
+    right: 200px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 200px;
 }
 
-/* GAME */
-
-#game-container{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-display:none;
-background:black;
+#edit-box input {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 
-#exit-game{
-position:absolute;
-top:20px;
-left:20px;
-z-index:10;
-padding:10px;
+#edit-box button {
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: black;
+    color: white;
+}
+
+.verify {
+    color: #1DA1F2;
+    font-weight: bold;
 }
 </style>
 </head>
@@ -167,256 +145,177 @@ padding:10px;
 
 <!-- LOADING -->
 <div id="loading-screen">
-<div class="loading-wrapper">
-
-<img src="logo.png" class="logo-image">
-
-<h1>Herrybloxer</h1>
-<p>Загрузка...</p>
-
-</div>
+    <div class="container">
+        <div class="title">
+            <img src="block.png" class="logo">
+            <h1>Herrybloxer</h1>
+        </div>
+        <p class="loading">Загрузка...</p>
+    </div>
 </div>
 
 <!-- MAIN -->
 <div id="main-content">
 
-<div id="profile">
-👤 <span id="nickname"></span>
-<button id="edit-btn">✏</button>
-</div>
+    <div id="profile">
+        👤 <span id="nickname"></span>
+        <button id="edit-btn">✏</button>
+    </div>
 
-<div id="edit-box">
-<input id="new-nick" placeholder="Новый ник">
-<button id="save-nick">Сохранить</button>
-</div>
+    <div id="edit-box">
+        <input type="text" id="new-nick" placeholder="Новый ник">
+        <button id="save-nick">Сохранить</button>
+    </div>
 
-<div class="layout">
-<div class="left">Добро пожаловать 🎮</div>
-<div class="right">
-<div id="test-game" class="game-card">
-The Test Game
-</div>
-</div>
-</div>
+    <div class="center-text">
+        Добро пожаловать в Herrybloxer 🎮
+    </div>
 
 </div>
 
-<!-- GAME -->
-<div id="game-container">
-<button id="exit-game">Выйти</button>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+setTimeout(() => {
+    document.getElementById("loading-screen").style.opacity = "0";
+    setTimeout(() => {
+        document.getElementById("loading-screen").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+    }, 500);
+}, 3000);
+</script>
 
 <script type="module">
-
-/* ===== LOADING ===== */
-
-window.addEventListener("load",()=>{
-setTimeout(()=>{
-document.getElementById("loading-screen").style.opacity="0";
-setTimeout(()=>{
-document.getElementById("loading-screen").style.display="none";
-document.getElementById("main-content").style.display="block";
-},600);
-},2000);
-});
-
-/* ===== FIREBASE ===== */
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, increment }
+import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, increment } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig={
-apiKey:"ТВОЙ_API_KEY",
-authDomain:"ТВОЙ_AUTH_DOMAIN",
-projectId:"ТВОЙ_PROJECT_ID"
+/* ================= FIREBASE ================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDGA3ij_G6IDmGAFILaEFrzPXUVkcIW0qI",
+  authDomain: "herrybloxer.firebaseapp.com",
+  projectId: "herrybloxer",
+  storageBucket: "herrybloxer.firebasestorage.app",
+  messagingSenderId: "319991453518",
+  appId: "1:319991453518:web:e2b90ba4fcafed73bfb01f"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-/* ===== OWNER ===== */
+/* ================= OWNER SYSTEM ================= */
 
-const REAL_OWNER_ID="65b73f08-2c93-4ac5-a20c-a5059ffa3bc1";
+/* 🔥 ВСТАВЬ СЮДА СВОЙ ID */
+const REAL_OWNER_ID = "ВСТАВЬ_СЮДА_СВОЙ_OWNER_ID";
 
-let ownerId=localStorage.getItem("herrybloxer_owner");
-if(!ownerId){
-ownerId=crypto.randomUUID();
-localStorage.setItem("herrybloxer_owner",ownerId);
+let ownerId = localStorage.getItem("herrybloxer_owner");
+
+if (!ownerId) {
+    ownerId = crypto.randomUUID();
+    localStorage.setItem("herrybloxer_owner", ownerId);
 }
 
-/* ===== FILTER ===== */
+/* ================= BAD WORD FILTER ================= */
 
-const bannedWords=["дурак","идиот","дибил","сасун","сасать","соси"];
-function bad(name){
-return bannedWords.some(w=>name.toLowerCase().includes(w));
+const bannedWords = ["дурак","идиот"];
+
+function containsBadWord(name) {
+    const lower = name.toLowerCase();
+    return bannedWords.some(word => lower.includes(word));
 }
 
-/* ===== USER SYSTEM ===== */
+/* ================= USER SYSTEM ================= */
 
-let nickname=localStorage.getItem("herrybloxer_nick");
+let nickname = localStorage.getItem("herrybloxer_nick");
 
-function renderNick(){
-const el=document.getElementById("nickname");
-if(ownerId===REAL_OWNER_ID){
-el.innerHTML=nickname+' <span class="verify">✔</span>';
-}else{
-el.textContent=nickname;
-}
-}
+async function createUser() {
+    const counterRef = doc(db, "global", "userCounter");
+    const snap = await getDoc(counterRef);
 
-async function createUser(){
-const ref=doc(db,"global","userCounter");
-const snap=await getDoc(ref);
-let n=1;
-if(snap.exists()){
-n=snap.data().count+1;
-await updateDoc(ref,{count:increment(1)});
-}else{
-await setDoc(ref,{count:1});
-}
-nickname="user"+n;
-localStorage.setItem("herrybloxer_nick",nickname);
-await setDoc(doc(db,"usernames",nickname),{created:Date.now()});
-renderNick();
+    let number;
+
+    if (!snap.exists()) {
+        number = 1;
+        await setDoc(counterRef, { count: 1 });
+    } else {
+        number = snap.data().count + 1;
+        await updateDoc(counterRef, { count: increment(1) });
+    }
+
+    nickname = "user" + number;
+    localStorage.setItem("herrybloxer_nick", nickname);
+
+    await setDoc(doc(db, "usernames", nickname), { createdAt: Date.now() });
+
+    renderNickname();
 }
 
-if(!nickname){
-await createUser();
-}else{
-renderNick();
+function renderNickname() {
+    const nickElement = document.getElementById("nickname");
+
+    if (ownerId === REAL_OWNER_ID) {
+        nickElement.innerHTML = nickname + ' <span class="verify">✔</span>';
+    } else {
+        nickElement.textContent = nickname;
+    }
 }
 
-/* ===== EDIT NICK ===== */
+async function init() {
+    if (!nickname) {
+        await createUser();
+    } else {
+        renderNickname();
+    }
+}
 
-const editBtn=document.getElementById("edit-btn");
-const editBox=document.getElementById("edit-box");
-const saveBtn=document.getElementById("save-nick");
-const newNickInput=document.getElementById("new-nick");
+await init();
 
-editBtn.onclick=()=>{
-editBox.style.display=
-editBox.style.display==="flex"?"none":"flex";
+/* ================= EDIT ================= */
+
+const editBtn = document.getElementById("edit-btn");
+const editBox = document.getElementById("edit-box");
+const saveBtn = document.getElementById("save-nick");
+const input = document.getElementById("new-nick");
+
+editBtn.onclick = () => {
+    editBox.style.display = editBox.style.display === "flex" ? "none" : "flex";
 };
 
-saveBtn.onclick=async()=>{
-const newNick=newNickInput.value.trim();
-if(!newNick||newNick.length<3)
-return alert("Минимум 3 символа");
+saveBtn.onclick = async () => {
+    const newNick = input.value.trim();
 
-if(bad(newNick))
-return alert("Запрещённое слово");
+    if (newNick.length < 3) {
+        alert("Минимум 3 символа!");
+        return;
+    }
 
-const ref=doc(db,"usernames",newNick);
-if((await getDoc(ref)).exists())
-return alert("Ник занят");
+    if (containsBadWord(newNick)) {
+        alert("Ник содержит запрещённые слова!");
+        return;
+    }
 
-await setDoc(ref,{created:Date.now()});
-await deleteDoc(doc(db,"usernames",nickname));
+    const ref = doc(db, "usernames", newNick);
+    const snap = await getDoc(ref);
 
-nickname=newNick;
-localStorage.setItem("herrybloxer_nick",nickname);
-renderNick();
-editBox.style.display="none";
+    if (snap.exists()) {
+        alert("Этот ник уже занят!");
+        return;
+    }
+
+    await setDoc(ref, { createdAt: Date.now() });
+    await deleteDoc(doc(db, "usernames", nickname));
+
+    nickname = newNick;
+    localStorage.setItem("herrybloxer_nick", nickname);
+
+    renderNickname();
+
+    editBox.style.display = "none";
+    input.value = "";
 };
-
-/* ===== 3D GAME ===== */
-
-const card=document.getElementById("test-game");
-const gameContainer=document.getElementById("game-container");
-const exitBtn=document.getElementById("exit-game");
-
-card.onclick=()=>{
-document.getElementById("main-content").style.display="none";
-gameContainer.style.display="block";
-startGame();
-};
-
-exitBtn.onclick=()=>{
-gameContainer.innerHTML='<button id="exit-game">Выйти</button>';
-gameContainer.style.display="none";
-document.getElementById("main-content").style.display="block";
-};
-
-function startGame(){
-
-const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x87ceeb);
-
-const camera=new THREE.PerspectiveCamera(
-75,window.innerWidth/window.innerHeight,.1,1000);
-
-const renderer=new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth,window.innerHeight);
-gameContainer.appendChild(renderer.domElement);
-
-const light=new THREE.DirectionalLight(0xffffff,1);
-light.position.set(5,10,5);
-scene.add(light);
-
-const ground=new THREE.Mesh(
-new THREE.PlaneGeometry(100,100),
-new THREE.MeshStandardMaterial({color:0x228B22})
-);
-ground.rotation.x=-Math.PI/2;
-scene.add(ground);
-
-const player=new THREE.Mesh(
-new THREE.BoxGeometry(1,2,1),
-new THREE.MeshStandardMaterial({color:0xff0000})
-);
-player.position.y=1;
-scene.add(player);
-
-camera.position.set(0,5,8);
-
-const keys={};
-document.addEventListener("keydown",e=>keys[e.key.toLowerCase()]=true);
-document.addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
-
-let velocityY=0;
-let onGround=true;
-
-function animate(){
-requestAnimationFrame(animate);
-
-const speed=.15;
-
-if(keys["w"])player.position.z-=speed;
-if(keys["s"])player.position.z+=speed;
-if(keys["a"])player.position.x-=speed;
-if(keys["d"])player.position.x+=speed;
-
-if(keys[" "]&&onGround){
-velocityY=.2;
-onGround=false;
-}
-
-velocityY-=.01;
-player.position.y+=velocityY;
-
-if(player.position.y<=1){
-player.position.y=1;
-velocityY=0;
-onGround=true;
-}
-
-camera.position.x=player.position.x;
-camera.position.z=player.position.z+8;
-camera.lookAt(player.position);
-
-renderer.render(scene,camera);
-}
-
-animate();
-}
-
 </script>
+
 </body>
 </html>
-
 
 
 
