@@ -13,9 +13,7 @@ html, body {
     font-family: sans-serif;
 }
 
-/* ==================== */
-/* ЗАГРУЗКА */
-/* ==================== */
+/* ================= LOADING ================= */
 
 #loading-screen {
     position: fixed;
@@ -29,21 +27,24 @@ html, body {
     z-index: 1000;
 }
 
-.container { text-align: center; transform: translateY(-60px); }
+.container {
+    text-align: center;
+    transform: translateY(-60px);
+}
 
 .title {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 30px;
+    gap: 25px;
 }
 
 .logo {
     width: 90px;
     height: 90px;
     border-radius: 25px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
     animation: spin 3s linear infinite;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
 
 @keyframes spin {
@@ -63,9 +64,7 @@ h1 {
     margin-top: 20px;
 }
 
-/* ==================== */
-/* ГЛАВНАЯ */
-/* ==================== */
+/* ================= MAIN ================= */
 
 #main-content {
     display: none;
@@ -74,22 +73,23 @@ h1 {
     position: relative;
 }
 
-.main-center {
+.center-text {
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 50px;
+    font-size: clamp(24px, 5vw, 50px);
 }
 
-/* Профиль */
+/* PROFILE */
+
 #profile {
     position: absolute;
     top: 20px;
     right: 30px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     background: rgba(0,0,0,0.05);
     padding: 10px 15px;
     border-radius: 12px;
@@ -102,11 +102,12 @@ h1 {
     font-size: 18px;
 }
 
-/* Мини-окно */
+/* EDIT BOX */
+
 #edit-box {
     position: absolute;
-    top: 70px;
-    right: 30px;
+    top: 20px;
+    right: 200px;
     background: white;
     padding: 15px;
     border-radius: 10px;
@@ -128,7 +129,7 @@ h1 {
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    background: #222;
+    background: black;
     color: white;
 }
 </style>
@@ -136,7 +137,7 @@ h1 {
 
 <body>
 
-<!-- ЗАГРУЗКА -->
+<!-- LOADING -->
 <div id="loading-screen">
     <div class="container">
         <div class="title">
@@ -147,7 +148,7 @@ h1 {
     </div>
 </div>
 
-<!-- ГЛАВНАЯ -->
+<!-- MAIN -->
 <div id="main-content">
 
     <div id="profile">
@@ -160,7 +161,7 @@ h1 {
         <button id="save-nick">Сохранить</button>
     </div>
 
-    <div class="main-center">
+    <div class="center-text">
         Добро пожаловать в Herrybloxer 🎮
     </div>
 
@@ -178,7 +179,8 @@ setTimeout(() => {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, increment } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDGA3ij_G6IDmGAFILaEFrzPXUVkcIW0qI",
@@ -192,29 +194,47 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const bannedWords = ["дурак","идиот"];
+
+function containsBadWord(name) {
+    const lower = name.toLowerCase();
+    return bannedWords.some(word => lower.includes(word));
+}
+
 let nickname = localStorage.getItem("herrybloxer_nick");
 
-if (!nickname) {
+async function createUser() {
     const counterRef = doc(db, "global", "userCounter");
-    const counterSnap = await getDoc(counterRef);
+    const snap = await getDoc(counterRef);
 
-    let newNumber;
+    let number;
 
-    if (!counterSnap.exists()) {
-        newNumber = 1;
+    if (!snap.exists()) {
+        number = 1;
         await setDoc(counterRef, { count: 1 });
     } else {
-        newNumber = counterSnap.data().count + 1;
+        number = snap.data().count + 1;
         await updateDoc(counterRef, { count: increment(1) });
     }
 
-    nickname = "user" + newNumber;
+    nickname = "user" + number;
     localStorage.setItem("herrybloxer_nick", nickname);
+
+    await setDoc(doc(db, "usernames", nickname), { createdAt: Date.now() });
+    document.getElementById("nickname").textContent = nickname;
 }
 
-document.getElementById("nickname").textContent = nickname;
+async function init() {
+    if (!nickname) {
+        await createUser();
+    } else {
+        document.getElementById("nickname").textContent = nickname;
+    }
+}
 
-/* ===== РЕДАКТИРОВАНИЕ НИКА ===== */
+await init();
+
+/* EDIT */
 
 const editBtn = document.getElementById("edit-btn");
 const editBox = document.getElementById("edit-box");
@@ -225,16 +245,34 @@ editBtn.onclick = () => {
     editBox.style.display = editBox.style.display === "flex" ? "none" : "flex";
 };
 
-saveBtn.onclick = () => {
+saveBtn.onclick = async () => {
     const newNick = input.value.trim();
+
     if (newNick.length < 3) {
-        alert("Ник должен быть минимум 3 символа!");
+        alert("Минимум 3 символа!");
         return;
     }
+
+    if (containsBadWord(newNick)) {
+        alert("Ник содержит запрещённые слова!");
+        return;
+    }
+
+    const ref = doc(db, "usernames", newNick);
+    const snap = await getDoc(ref);
+
+    if (snap.exists()) {
+        alert("Этот ник уже занят!");
+        return;
+    }
+
+    await setDoc(ref, { createdAt: Date.now() });
+    await deleteDoc(doc(db, "usernames", nickname));
 
     nickname = newNick;
     localStorage.setItem("herrybloxer_nick", nickname);
     document.getElementById("nickname").textContent = nickname;
+
     editBox.style.display = "none";
     input.value = "";
 };
@@ -242,6 +280,7 @@ saveBtn.onclick = () => {
 
 </body>
 </html>
+
 
 
 
