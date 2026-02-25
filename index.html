@@ -9,8 +9,8 @@
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
     font-family: sans-serif;
+    background: #f5f5f5;
 }
 
 /* ================= LOADING ================= */
@@ -19,72 +19,26 @@ html, body {
     position: fixed;
     width: 100%;
     height: 100vh;
-    background: url('background.jpg') center / cover no-repeat;
+    background: linear-gradient(135deg,#111,#333);
     display: flex;
     justify-content: center;
     align-items: center;
     transition: opacity 0.5s ease;
     z-index: 1000;
-}
-
-.container {
-    text-align: center;
-    transform: translateY(-60px);
-}
-
-.title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 25px;
-}
-
-.logo {
-    width: 90px;
-    height: 90px;
-    border-radius: 25px;
-    animation: spin 3s linear infinite;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-}
-
-h1 {
-    font-size: clamp(40px, 8vw, 90px);
     color: white;
-    margin: 0;
-}
-
-.loading {
-    font-size: clamp(20px, 4vw, 39px);
-    color: white;
-    margin-top: 20px;
 }
 
 /* ================= MAIN ================= */
 
 #main-content {
     display: none;
-    height: 100vh;
-    background: #f5f5f5;
-    position: relative;
+    min-height: 100vh;
 }
 
-.center-text {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: clamp(24px, 5vw, 50px);
-}
-
-/* PROFILE */
+/* ================= PROFILE ================= */
 
 #profile {
-    position: absolute;
+    position: fixed;
     top: 20px;
     right: 30px;
     display: flex;
@@ -94,84 +48,97 @@ h1 {
     padding: 10px 15px;
     border-radius: 12px;
     font-size: 18px;
-}
-
-#edit-btn {
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-size: 18px;
-}
-
-/* EDIT BOX */
-
-#edit-box {
-    position: absolute;
-    top: 20px;
-    right: 200px;
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    display: none;
-    flex-direction: column;
-    gap: 10px;
-    width: 200px;
-}
-
-#edit-box input {
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-#edit-box button {
-    padding: 8px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    background: black;
-    color: white;
+    z-index: 5;
 }
 
 .verify {
     color: #1DA1F2;
     font-weight: bold;
 }
+
+/* ================= GAME CARD ================= */
+
+.games {
+    padding: 120px 40px 40px 40px;
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.game-card {
+    width: 250px;
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.game-card:hover {
+    transform: scale(1.05);
+}
+
+.game-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.game-author {
+    font-size: 14px;
+    color: gray;
+    margin-top: 5px;
+}
+
+/* ================= GAME VIEW ================= */
+
+#game-container {
+    position: fixed;
+    inset: 0;
+    display: none;
+    background: black;
+}
+
+#back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 10px;
+    cursor: pointer;
+}
 </style>
 </head>
 
 <body>
 
-<!-- LOADING -->
 <div id="loading-screen">
-    <div class="container">
-        <div class="title">
-            <img src="block.png" class="logo">
-            <h1>Herrybloxer</h1>
-        </div>
-        <p class="loading">Загрузка...</p>
-    </div>
+    <h1>Herrybloxer</h1>
 </div>
 
-<!-- MAIN -->
 <div id="main-content">
 
-    <div id="profile">
-        👤 <span id="nickname"></span>
-        <button id="edit-btn">✏</button>
-    </div>
+<div id="profile">
+👤 <span id="nickname"></span>
+</div>
 
-    <div id="edit-box">
-        <input type="text" id="new-nick" placeholder="Новый ник">
-        <button id="save-nick">Сохранить</button>
+<div class="games">
+    <div class="game-card" onclick="startGame()">
+        <div class="game-title">The Test Game</div>
+        <div class="game-author">Herrybloxer</div>
     </div>
-
-    <div class="center-text">
-        Добро пожаловать в Herrybloxer 🎮
-    </div>
+</div>
 
 </div>
+
+<div id="game-container">
+    <div id="back-btn" onclick="exitGame()">← Назад</div>
+</div>
+
+<!-- THREE JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
 setTimeout(() => {
@@ -180,142 +147,126 @@ setTimeout(() => {
         document.getElementById("loading-screen").style.display = "none";
         document.getElementById("main-content").style.display = "block";
     }, 500);
-}, 3000);
-</script>
+}, 1500);
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, increment } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+let scene, camera, renderer, player;
+let moveForward=false, moveBackward=false, moveLeft=false, moveRight=false;
+let velocityY = 0;
+let canJump = false;
 
-/* ================= FIREBASE ================= */
+function startGame() {
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDGA3ij_G6IDmGAFILaEFrzPXUVkcIW0qI",
-  authDomain: "herrybloxer.firebaseapp.com",
-  projectId: "herrybloxer",
-  storageBucket: "herrybloxer.firebasestorage.app",
-  messagingSenderId: "319991453518",
-  appId: "1:319991453518:web:e2b90ba4fcafed73bfb01f"
-};
+    document.getElementById("main-content").style.display="none";
+    const container = document.getElementById("game-container");
+    container.style.display="block";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB);
 
-/* ================= OWNER SYSTEM ================= */
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.y = 2;
 
-/* 🔥 ВСТАВЬ СЮДА СВОЙ ID */
-const REAL_OWNER_ID = "65b73f08-2c93-4ac5-a20c-a5059ffa3bc1";
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
 
-let ownerId = localStorage.getItem("herrybloxer_owner");
+    // свет
+    const light = new THREE.HemisphereLight(0xffffff,0x444444);
+    scene.add(light);
 
-if (!ownerId) {
-    ownerId = crypto.randomUUID();
-    localStorage.setItem("herrybloxer_owner", ownerId);
+    // пол
+    const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(200,200),
+        new THREE.MeshLambertMaterial({color:0x228B22})
+    );
+    floor.rotation.x = -Math.PI/2;
+    scene.add(floor);
+
+    // кубики
+    for(let i=0;i<50;i++){
+        const box = new THREE.Mesh(
+            new THREE.BoxGeometry(2,2,2),
+            new THREE.MeshLambertMaterial({color:0x00aa00})
+        );
+        box.position.set(
+            (Math.random()-0.5)*100,
+            1,
+            (Math.random()-0.5)*100
+        );
+        scene.add(box);
+    }
+
+    document.body.requestPointerLock();
+
+    animate();
 }
 
-/* ================= BAD WORD FILTER ================= */
+function animate(){
+    requestAnimationFrame(animate);
 
-const bannedWords = ["дурак","идиот"];
+    const speed = 0.15;
 
-function containsBadWord(name) {
-    const lower = name.toLowerCase();
-    return bannedWords.some(word => lower.includes(word));
+    if(moveForward) camera.translateZ(-speed);
+    if(moveBackward) camera.translateZ(speed);
+    if(moveLeft) camera.translateX(-speed);
+    if(moveRight) camera.translateX(speed);
+
+    velocityY -= 0.01;
+    camera.position.y += velocityY;
+
+    if(camera.position.y < 2){
+        velocityY = 0;
+        camera.position.y = 2;
+        canJump = true;
+    }
+
+    renderer.render(scene,camera);
 }
 
-/* ================= USER SYSTEM ================= */
-
-let nickname = localStorage.getItem("herrybloxer_nick");
-
-async function createUser() {
-    const counterRef = doc(db, "global", "userCounter");
-    const snap = await getDoc(counterRef);
-
-    let number;
-
-    if (!snap.exists()) {
-        number = 1;
-        await setDoc(counterRef, { count: 1 });
-    } else {
-        number = snap.data().count + 1;
-        await updateDoc(counterRef, { count: increment(1) });
-    }
-
-    nickname = "user" + number;
-    localStorage.setItem("herrybloxer_nick", nickname);
-
-    await setDoc(doc(db, "usernames", nickname), { createdAt: Date.now() });
-
-    renderNickname();
+function exitGame(){
+    document.exitPointerLock();
+    document.getElementById("game-container").style.display="none";
+    document.getElementById("main-content").style.display="block";
+    location.reload();
 }
 
-function renderNickname() {
-    const nickElement = document.getElementById("nickname");
+/* ================= CONTROLS ================= */
 
-    if (ownerId === REAL_OWNER_ID) {
-        nickElement.innerHTML = nickname + ' <span class="verify">✔</span>';
-    } else {
-        nickElement.textContent = nickname;
+document.addEventListener("keydown", e=>{
+    switch(e.code){
+        case "KeyW": moveForward=true; break;
+        case "KeyS": moveBackward=true; break;
+        case "KeyA": moveLeft=true; break;
+        case "KeyD": moveRight=true; break;
+        case "Space":
+            if(canJump){
+                velocityY=0.2;
+                canJump=false;
+            }
+            break;
     }
-}
+});
 
-async function init() {
-    if (!nickname) {
-        await createUser();
-    } else {
-        renderNickname();
+document.addEventListener("keyup", e=>{
+    switch(e.code){
+        case "KeyW": moveForward=false; break;
+        case "KeyS": moveBackward=false; break;
+        case "KeyA": moveLeft=false; break;
+        case "KeyD": moveRight=false; break;
     }
-}
+});
 
-await init();
-
-/* ================= EDIT ================= */
-
-const editBtn = document.getElementById("edit-btn");
-const editBox = document.getElementById("edit-box");
-const saveBtn = document.getElementById("save-nick");
-const input = document.getElementById("new-nick");
-
-editBtn.onclick = () => {
-    editBox.style.display = editBox.style.display === "flex" ? "none" : "flex";
-};
-
-saveBtn.onclick = async () => {
-    const newNick = input.value.trim();
-
-    if (newNick.length < 3) {
-        alert("Минимум 3 символа!");
-        return;
+document.addEventListener("mousemove", e=>{
+    if(document.pointerLockElement === document.body){
+        camera.rotation.y -= e.movementX * 0.002;
+        camera.rotation.x -= e.movementY * 0.002;
     }
-
-    if (containsBadWord(newNick)) {
-        alert("Ник содержит запрещённые слова!");
-        return;
-    }
-
-    const ref = doc(db, "usernames", newNick);
-    const snap = await getDoc(ref);
-
-    if (snap.exists()) {
-        alert("Этот ник уже занят!");
-        return;
-    }
-
-    await setDoc(ref, { createdAt: Date.now() });
-    await deleteDoc(doc(db, "usernames", nickname));
-
-    nickname = newNick;
-    localStorage.setItem("herrybloxer_nick", nickname);
-
-    renderNickname();
-
-    editBox.style.display = "none";
-    input.value = "";
-};
+});
 </script>
 
 </body>
 </html>
+
 
 
 
