@@ -34,24 +34,13 @@ text-align:center;
 animation:fadeIn 1s ease;
 }
 
-.logo-box{
-width:120px;
-height:120px;
-background:linear-gradient(145deg,#005eff,#003cff);
-border-radius:30px;
+/* ТВОЯ КАРТИНКА */
+.logo-image{
+width:150px;
 margin:0 auto 25px;
-display:flex;
-justify-content:center;
-align-items:center;
-box-shadow:0 15px 40px rgba(0,0,0,.4);
+display:block;
 animation:spin 4s linear infinite;
-}
-
-.inner-brick{
-width:50px;
-height:50px;
-background:#ff2a2a;
-border-radius:8px;
+filter:drop-shadow(0 15px 30px rgba(0,0,0,.5));
 }
 
 #loading-screen h1{
@@ -179,11 +168,12 @@ padding:10px;
 <!-- LOADING -->
 <div id="loading-screen">
 <div class="loading-wrapper">
-<div class="logo-box">
-<div class="inner-brick"></div>
-</div>
+
+<img src="logo.png" class="logo-image">
+
 <h1>Herrybloxer</h1>
 <p>Загрузка...</p>
+
 </div>
 </div>
 
@@ -426,6 +416,7 @@ animate();
 </script>
 </body>
 </html>
+
 
 
 
