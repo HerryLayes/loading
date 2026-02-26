@@ -364,12 +364,13 @@ saveBtn.onclick = async () => {
 document.querySelectorAll(".game-card").forEach(card => {
     card.addEventListener("click", () => {
         const spaceId = card.getAttribute("data-space");
-        window.location.href = "/game/?space=" + spaceId;
+        window.location.href = "/game.html?space=" + spaceId;
     });
 });
 </script>
 </body>
 </html>
+
 
 
 
