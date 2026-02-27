@@ -15,9 +15,16 @@
         body {
             height: 100vh;
             background: url('background.jpg') no-repeat center center/cover;
+            overflow: hidden;
         }
 
-        /* ======= Главный экран ======= */
+        /* ===== Главный стартовый экран ===== */
+
+        .start-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
 
         .header {
             position: absolute;
@@ -51,12 +58,10 @@
             transform: scale(1.05);
         }
 
-        /* ======= Экран загрузки ======= */
+        /* ===== Экран загрузки ===== */
 
         .loading-screen {
             position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
             background: url('loading.jpg') no-repeat center center/cover;
@@ -79,22 +84,21 @@
         .loading-title {
             font-size: 60px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-top: 20px;
             text-shadow: 2px 2px 8px black;
         }
 
         .loading-text {
             font-size: 24px;
-            margin-bottom: 30px;
+            margin-top: 10px;
             text-shadow: 2px 2px 8px black;
         }
 
         .loading-logo {
-    width: 120px;
-    height: 120px;
-    border-radius: 25px;
-    animation: spin 2s linear infinite;
-    margin-bottom: 25px;
+            width: 120px;
+            height: 120px;
+            border-radius: 25px;
+            animation: spin 2s linear infinite;
         }
 
         @keyframes spin {
@@ -102,34 +106,81 @@
             to { transform: rotate(360deg); }
         }
 
+        /* ===== Главный экран платформы ===== */
+
+        .platform-screen {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e1e2f, #2c2c54);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.5s;
+        }
+
+        .platform-screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- Главный экран -->
-    <div class="header">
-        Образовательный конструктор 3D-игр
-    </div>
+    <!-- Стартовый экран -->
+    <div class="start-screen" id="startScreen">
+        <div class="header">
+            Образовательный конструктор 3D-игр
+        </div>
 
-    <div class="button-container">
-        <button class="btn" onclick="openPlatform()">Открыть платформу</button>
+        <div class="button-container">
+            <button class="btn" onclick="openPlatform()">Открыть платформу</button>
+        </div>
     </div>
 
     <!-- Экран загрузки -->
     <div class="loading-screen" id="loadingScreen">
-    <img src="logo.png" class="loading-logo">
-    <div class="loading-title">Herrybloxer</div>
-    <div class="loading-text">Загрузка...</div>
+        <img src="logo.png" class="loading-logo">
+        <div class="loading-title">Herrybloxer</div>
+        <div class="loading-text">Загрузка...</div>
+    </div>
+
+    <!-- Главный экран платформы -->
+    <div class="platform-screen" id="platformScreen">
+        Добро пожаловать в Herrybloxer 🚀
     </div>
 
     <script>
         function openPlatform() {
+
+            // Показываем загрузку
             document.getElementById("loadingScreen").classList.add("active");
+
+            // Через 3 секунды
+            setTimeout(function() {
+
+                // Скрываем стартовый экран
+                document.getElementById("startScreen").style.display = "none";
+
+                // Скрываем загрузку
+                document.getElementById("loadingScreen").classList.remove("active");
+
+                // Показываем платформу
+                document.getElementById("platformScreen").classList.add("active");
+
+            }, 3000);
         }
     </script>
 
 </body>
 </html>
+
 
 
 
