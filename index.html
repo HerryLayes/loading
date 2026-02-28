@@ -285,6 +285,21 @@
     transform: scale(1.03);
 }
 
+        .nick-error {
+    color: #e53935;
+    font-size: 14px;
+    margin-bottom: 10px;
+    min-height: 18px;
+}
+
+
+        .verified {
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
     </style>
 </head>
 <body>
@@ -355,7 +370,13 @@ onAuthStateChanged(auth, async (user) => {
                 nickname: nickname
             });
 
-            document.getElementById("nickname").innerText = nickname;
+            const nicknameElement = document.getElementById("nickname");
+
+nicknameElement.innerHTML = userData.nickname;
+
+if (currentUser && currentUser.uid === "qnevdFJhd1Q9FvjOp2t4GBT95pp1") {
+    nicknameElement.innerHTML += ` <img src="tick.png" class="verified">`;
+}
 
         } else {
             document.getElementById("nickname").innerText =
@@ -529,14 +550,32 @@ window.closeSettings = function() {
 // Сохранение ника
 window.saveNickname = async function() {
 
-    const newNick = document.getElementById("newNickname").value;
+    const newNick = document.getElementById("newNickname").value.trim();
+    const errorField = document.getElementById("nickError");
+
+    errorField.innerText = "";
 
     if (!newNick) return;
 
+    // Проверка: есть ли уже такой ник
+    const q = query(
+        collection(db, "users"),
+        where("nickname", "==", newNick)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+        errorField.innerText = "Этот ник уже занят!";
+        return;
+    }
+
+    // Сохраняем ник
     const userRef = doc(db, "users", currentUser.uid);
     await updateDoc(userRef, { nickname: newNick });
 
     document.getElementById("nickname").innerText = newNick;
+
     closeSettings();
 };
 
@@ -584,6 +623,8 @@ window.logoutUser = async function() {
 
         <h3>Настройки</h3>
 
+        <p id="nickError" class="nick-error"></p>
+
         <input id="newNickname" type="text" placeholder="Новый ник">
 
         <button class="main-btn" onclick="saveNickname()">Сохранить</button>
@@ -596,6 +637,7 @@ window.logoutUser = async function() {
 
 </body>
 </html>
+
 
 
 
