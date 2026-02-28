@@ -182,6 +182,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let currentUser = null;
+       document.getElementById("nickname").innerText = "Гость";
 
 // ===== Проверка входа =====
 onAuthStateChanged(auth, async (user) => {
@@ -194,7 +195,7 @@ onAuthStateChanged(auth, async (user) => {
         const userSnap = await getDoc(userRef);
 
         if (!userSnap.exists()) {
-            // Если это новый пользователь — создаём ник
+
             const nickname = await generateNickname();
 
             await setDoc(userRef, {
@@ -204,12 +205,15 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById("nickname").innerText = nickname;
 
         } else {
-            document.getElementById("nickname").innerText = userSnap.data().nickname;
+            document.getElementById("nickname").innerText =
+                userSnap.data().nickname;
         }
 
     } else {
+
         currentUser = null;
         document.getElementById("nickname").innerText = "Гость";
+
     }
 
 });
@@ -255,10 +259,6 @@ window.openPlatform = function() {
         document.getElementById("startScreen").style.display = "none";
         document.getElementById("loadingScreen").classList.remove("active");
         document.getElementById("platformScreen").classList.add("active");
-
-        if (!currentUser) {
-            document.getElementById("nickname").innerText = localStorage.getItem("nickname");
-        }
 
     }, 3000);
 };
@@ -332,6 +332,7 @@ align-items:center;
 </div>
 </body>
 </html>
+
 
 
 
