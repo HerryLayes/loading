@@ -333,7 +333,17 @@
    <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { 
+    getFirestore, 
+    doc, 
+    getDoc, 
+    setDoc, 
+    updateDoc,
+    collection,
+    query,
+    where,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -355,6 +365,8 @@ let currentUser = null;
 // ===== Проверка входа =====
 onAuthStateChanged(auth, async (user) => {
 
+    const nicknameElement = document.getElementById("nickname");
+
     if (user) {
 
         currentUser = user;
@@ -362,34 +374,33 @@ onAuthStateChanged(auth, async (user) => {
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
 
+        let nickname;
+
         if (!userSnap.exists()) {
 
-            const nickname = await generateNickname();
+            nickname = await generateNickname();
 
             await setDoc(userRef, {
                 nickname: nickname
             });
 
-            const nicknameElement = document.getElementById("nickname");
-
-nicknameElement.innerHTML = userData.nickname;
-
-if (currentUser && currentUser.uid === "qnevdFJhd1Q9FvjOp2t4GBT95pp1") {
-    nicknameElement.innerHTML += ` <img src="tick.png" class="verified">`;
-}
-
         } else {
-            document.getElementById("nickname").innerText =
-                userSnap.data().nickname;
+            nickname = userSnap.data().nickname;
+        }
+
+        nicknameElement.innerHTML = nickname;
+
+        // ⭐ Галочка
+        if (user.uid === "qnevdFJhd1Q9FvjOp2t4GBT95pp1") {
+            nicknameElement.innerHTML += ` <img src="tick.png" class="verified">`;
         }
 
     } else {
 
         currentUser = null;
-        document.getElementById("nickname").innerText = "Гость";
+        nicknameElement.innerText = "Гость";
 
     }
-
 });
 
 // ===== Загрузка ника пользователя =====
@@ -450,7 +461,12 @@ window.editNickname = function() {
     if (newNick) {
         const userRef = doc(db, "users", currentUser.uid);
         updateDoc(userRef, { nickname: newNick });
-        document.getElementById("nickname").innerText = newNick;
+        const nicknameElement = document.getElementById("nickname");
+nicknameElement.innerHTML = newNick;
+
+if (currentUser.uid === "qnevdFJhd1Q9FvjOp2t4GBT95pp1") {
+    nicknameElement.innerHTML += ` <img src="tick.png" class="verified">`;
+}
     }
 };
 
@@ -637,6 +653,7 @@ window.logoutUser = async function() {
 
 </body>
 </html>
+
 
 
 
