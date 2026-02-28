@@ -346,6 +346,13 @@ import {
     getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { 
+    getAuth, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword, 
+    onAuthStateChanged,
+    sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDGA3ij_G6IDmGAFILaEFrzPXUVkcIW0qI",
@@ -478,8 +485,18 @@ window.loginUser = async function() {
     const password = document.getElementById("password").value;
 
     try {
-        await signInWithEmailAndPassword(auth, email, password);
+
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+        if (!userCredential.user.emailVerified) {
+
+            alert("Подтвердите email перед входом!");
+            await auth.signOut();
+            return;
+        }
+
         location.reload();
+
     } catch (error) {
         alert("Ошибка входа: " + error.message);
     }
@@ -495,13 +512,13 @@ window.loginUser = async function() {
 
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-        const nickname = await generateNickname();
+        // 🔥 Отправляем письмо подтверждения
+        await sendEmailVerification(userCredential.user);
 
-        await setDoc(doc(db, "users", userCredential.user.uid), {
-            nickname: nickname
-        });
+        alert("На вашу почту отправлено письмо для подтверждения!");
 
-        location.reload();
+        // Выходим из аккаунта пока не подтвердит
+        await auth.signOut();
 
     } catch (error) {
         alert("Ошибка регистрации: " + error.message);
@@ -654,6 +671,7 @@ window.logoutUser = async function() {
 
 </body>
 </html>
+
 
 
 
