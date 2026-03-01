@@ -418,7 +418,7 @@
     position: absolute;
     top: 20px;
     right: 20px;
-    z-index: 10;
+    left: auto;    
 
     background: #3c4b57;
     padding: 18px;
@@ -446,8 +446,16 @@
 /* Панель объектов */
 .objects-panel {
     position: absolute;
-    inset: 0;
+
+    top: 80px;
+    right: 20px;
+
+    width: 350px;
+    height: 450px;
+
     background: rgba(0,0,0,0.5);
+    border-radius: 20px;
+
     display: none;
     z-index: 20;
 }
@@ -1061,6 +1069,7 @@ function animate() {
 </div>
 </body>
 </html>
+
 
 
 
