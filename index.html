@@ -925,32 +925,61 @@ function init3D() {
 
     scene = new THREE.Scene();
 
-camera = new THREE.PerspectiveCamera(
-    75,
-    1,
-    0.1,
-    1000
-);
+    camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    camera.position.set(0, 2, 5);
 
-camera.position.set(0, 2, 5);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
 
-renderer = new THREE.WebGLRenderer({ antialias: true });
+    const container = document.getElementById("editor3d");
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
 
-const container = document.getElementById("editor3d");
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
 
-renderer.setSize(container.clientWidth, container.clientHeight);
-container.appendChild(renderer.domElement);
+    // ===== НЕБО =====
+    const skyMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            topColor: { value: new THREE.Color(0x87CEEB) },
+            bottomColor: { value: new THREE.Color(0xffffff) },
+            offset: { value: 33 },
+            exponent: { value: 0.6 }
+        },
+        vertexShader: `
+            varying vec3 vWorldPosition;
+            void main() {
+                vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+                vWorldPosition = worldPosition.xyz;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform vec3 topColor;
+            uniform vec3 bottomColor;
+            uniform float offset;
+            uniform float exponent;
+            varying vec3 vWorldPosition;
+            void main() {
+                float h = normalize(vWorldPosition + offset).y;
+                gl_FragColor = vec4(mix(bottomColor, topColor, pow(max(h, 0.0), exponent)), 1.0);
+            }
+        `,
+        side: THREE.BackSide
+    });
 
-camera.aspect = container.clientWidth / container.clientHeight;
-camera.updateProjectionMatrix();
+    const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+    const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+    scene.add(sky);
 
+    const light = new THREE.HemisphereLight(0xffffff, 0x444444);
+    scene.add(light);
+
+    // ===== КНОПКА "+" =====
     const objectsPanel = document.querySelector(".objects-panel");
-    if (!objectsPanel) return;
 
     const addBtn = document.createElement("div");
     addBtn.className = "add-object-btn";
     addBtn.textContent = "+";
-
     objectsPanel.appendChild(addBtn);
 
     addBtn.addEventListener("click", () => {
@@ -969,7 +998,17 @@ camera.updateProjectionMatrix();
         scene.add(cube);
     });
 
-});
+    // ===== POINTER LOCK =====
+    renderer.domElement.addEventListener("click", () => {
+        renderer.domElement.requestPointerLock();
+    });
+
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keyup", onKeyUp);
+    document.addEventListener("mousemove", onMouseMove);
+
+    animate();
+}
 
 // 🌤 НЕБО (правильный порядок)
 const skyMaterial = new THREE.ShaderMaterial({
@@ -1034,8 +1073,6 @@ document.getElementById("closeObjects").addEventListener("click", () => {
     // Возвращаем кнопку выхода
     document.getElementById("editorUI").style.display = "block";
 });
-
-animate();
 }
        
 let yaw = 0;
@@ -1135,6 +1172,7 @@ function animate() {
 </div>
 </body>
 </html>
+
 
 
 
