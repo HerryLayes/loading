@@ -753,38 +753,37 @@ window.openEditor = function() {
 function init3D() {
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xff0000);
 
-    camera = new THREE.PerspectiveCamera(
-        75,
-        1,
-        0.1,
-        1000
-    );
+camera = new THREE.PerspectiveCamera(
+    75,
+    1,
+    0.1,
+    1000
+);
 
-    camera.position.set(0, 2, 5);
+camera.position.set(0, 2, 5);
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer = new THREE.WebGLRenderer({ antialias: true });
 
-    const container = document.getElementById("editor3d");
+const container = document.getElementById("editor3d");
 
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    container.appendChild(renderer.domElement);
+renderer.setSize(container.clientWidth, container.clientHeight);
+container.appendChild(renderer.domElement);
 
-    camera.aspect = container.clientWidth / container.clientHeight;
+camera.aspect = container.clientWidth / container.clientHeight;
+camera.updateProjectionMatrix();
+
+window.addEventListener("resize", () => {
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    renderer.setSize(width, height);
+    camera.aspect = width / height;
     camera.updateProjectionMatrix();
+});
 
-    // 🔥 resize внутри init3D
-    window.addEventListener("resize", () => {
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-
-        renderer.setSize(width, height);
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-    });
-
-    const skyMaterial = new THREE.ShaderMaterial({
+// 🌤 НЕБО (правильный порядок)
+const skyMaterial = new THREE.ShaderMaterial({
     uniforms: {
         topColor: { value: new THREE.Color(0x87CEEB) },
         bottomColor: { value: new THREE.Color(0xffffff) },
@@ -807,20 +806,24 @@ function init3D() {
         varying vec3 vWorldPosition;
         void main() {
             float h = normalize(vWorldPosition + offset).y;
-            gl_FragColor = vec4(mix(bottomColor, topColor, max(pow(max(h, 0.0), exponent), 0.0)), 1.0);
+            gl_FragColor = vec4(mix(bottomColor, topColor, pow(max(h, 0.0), exponent)), 1.0);
         }
     `,
     side: THREE.BackSide
 });
 
-    const light = new THREE.HemisphereLight(0xffffff, 0x444444);
-    scene.add(light);
+const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+scene.add(sky);
 
-    document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("keyup", onKeyUp);
-    document.addEventListener("mousemove", onMouseMove);
+const light = new THREE.HemisphereLight(0xffffff, 0x444444);
+scene.add(light);
 
-    animate();
+document.addEventListener("keydown", onKeyDown);
+document.addEventListener("keyup", onKeyUp);
+document.addEventListener("mousemove", onMouseMove);
+
+animate();
 }
        
 let yaw = 0;
@@ -907,6 +910,7 @@ function animate() {
 </div>
 </body>
 </html>
+
 
 
 
