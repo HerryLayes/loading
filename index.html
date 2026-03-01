@@ -1065,7 +1065,7 @@ const skyMaterial = new THREE.ShaderMaterial({
 const sky = new THREE.Mesh(skyGeometry, skyMaterial);
 scene.add(sky);
 
-    addBtn.addEventListener("click", () => {
+    addBtn.onclick = () => {
 
     const direction = new THREE.Vector3();
     camera.getWorldDirection(direction);
@@ -1075,16 +1075,15 @@ scene.add(sky);
     const cube = new THREE.Mesh(
         new THREE.BoxGeometry(1, 1, 1),
         new THREE.MeshStandardMaterial({
-    color: 0xcccccc,  // светло-серый
-    roughness: 0.5,
-    metalness: 0.1
-})
+            color: 0xcccccc,
+            roughness: 0.5,
+            metalness: 0.1
+        })
     );
 
     cube.position.copy(position);
     scene.add(cube);
 
-    // ===== СОЗДАЁМ КАРТОЧКУ В ПАНЕЛИ =====
     cubeCounter++;
 
     const item = document.createElement("div");
@@ -1095,7 +1094,7 @@ scene.add(sky);
     `;
 
     objectsList.appendChild(item);
-});
+};
 
     // ===== POINTER LOCK =====
     renderer.domElement.addEventListener("click", () => {
@@ -1204,6 +1203,7 @@ function animate() {
 </div>
 </body>
 </html>
+
 
 
 
