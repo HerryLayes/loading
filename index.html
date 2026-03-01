@@ -1106,12 +1106,19 @@ objectsList.appendChild(item);
 nameSpan.addEventListener("click", () => {
 
     const input = document.createElement("input");
-    input.type = "text";
-    input.value = nameSpan.textContent;
-    input.style.fontSize = "18px";
-    input.style.borderRadius = "6px";
-    input.style.border = "none";
-    input.style.padding = "4px";
+input.type = "text";
+input.value = nameSpan.textContent;
+
+input.setAttribute("autocomplete", "off");
+input.setAttribute("autocorrect", "off");
+input.setAttribute("autocapitalize", "off");
+input.setAttribute("spellcheck", "false");
+input.name = "cube-name-" + Date.now();
+
+input.style.fontSize = "18px";
+input.style.borderRadius = "6px";
+input.style.border = "none";
+input.style.padding = "4px";
 
     item.replaceChild(input, nameSpan);
     input.focus();
@@ -1127,6 +1134,18 @@ nameSpan.addEventListener("click", () => {
         }
 
     });
+
+    // Сохранение при клике вне input
+input.addEventListener("blur", () => {
+
+    const newName = input.value.trim();
+    nameSpan.textContent = newName || nameSpan.textContent;
+
+    if (item.contains(input)) {
+        item.replaceChild(nameSpan, input);
+    }
+
+});
 
 });
 
@@ -1240,6 +1259,7 @@ function animate() {
 </div>
 </body>
 </html>
+
 
 
 
