@@ -918,6 +918,21 @@ document.getElementById("exitEditorBtn").addEventListener("click", () => {
     document.querySelector(".nickname").style.display = "flex";
 });
 
+// ===== ОТКРЫТИЕ ПАНЕЛИ ОБЪЕКТОВ =====
+const objectsBtn = document.getElementById("objectsBtn");
+const objectsPanel = document.getElementById("objectsPanel");
+const closeObjects = document.getElementById("closeObjects");
+
+objectsBtn.addEventListener("click", () => {
+    objectsPanel.style.display = "block";
+    objectsBtn.style.display = "none";
+});
+
+closeObjects.addEventListener("click", () => {
+    objectsPanel.style.display = "none";
+    objectsBtn.style.display = "block";
+});
+
 // ===== INIT 3D =====
 function init3D() {
 
@@ -1078,6 +1093,7 @@ function animate() {
 </div>
 </body>
 </html>
+
 
 
 
