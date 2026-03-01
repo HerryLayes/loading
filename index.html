@@ -492,6 +492,34 @@
     pointer-events: auto;
 }
 
+
+        .add-object-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    width: 45px;
+    height: 45px;
+
+    background: #4a5a67;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.add-object-btn:hover {
+    background: #5f7383;
+    transform: scale(1.1);
+}
+
     </style>
 </head>
 <body>
@@ -855,6 +883,8 @@ let moveBackward = false;
 let moveLeft = false;
 let moveRight = false;
 let isPointerLocked = false;
+let raycaster = new THREE.Raycaster();
+let direction = new THREE.Vector3();
 
 window.openEditor = function() {
 
@@ -891,6 +921,25 @@ document.getElementById("exitEditorBtn").addEventListener("click", () => {
 
 });
 
+document.querySelector(".add-object-btn").addEventListener("click", () => {
+
+    // Направление взгляда камеры
+    camera.getWorldDirection(direction);
+
+    // Позиция перед камерой
+    const distance = 3;
+    const position = camera.position.clone().add(direction.multiplyScalar(distance));
+
+    // Создаём куб
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshStandardMaterial({ color: 0x888888 });
+    const cube = new THREE.Mesh(geometry, material);
+
+    cube.position.copy(position);
+
+    scene.add(cube);
+});
+
 function init3D() {
 
     scene = new THREE.Scene();
@@ -914,13 +963,33 @@ container.appendChild(renderer.domElement);
 camera.aspect = container.clientWidth / container.clientHeight;
 camera.updateProjectionMatrix();
 
-window.addEventListener("resize", () => {
-    const width = container.clientWidth;
-    const height = container.clientHeight;
+window.addEventListener("load", () => {
 
-    renderer.setSize(width, height);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
+    const objectsPanel = document.querySelector(".objects-panel");
+    if (!objectsPanel) return;
+
+    const addBtn = document.createElement("div");
+    addBtn.className = "add-object-btn";
+    addBtn.textContent = "+";
+
+    objectsPanel.appendChild(addBtn);
+
+    addBtn.addEventListener("click", () => {
+
+        const direction = new THREE.Vector3();
+        camera.getWorldDirection(direction);
+
+        const distance = 3;
+        const position = camera.position.clone().add(direction.multiplyScalar(distance));
+
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshStandardMaterial({ color: 0x888888 });
+        const cube = new THREE.Mesh(geometry, material);
+
+        cube.position.copy(position);
+        scene.add(cube);
+    });
+
 });
 
 // 🌤 НЕБО (правильный порядок)
@@ -1087,6 +1156,7 @@ function animate() {
 </div>
 </body>
 </html>
+
 
 
 
