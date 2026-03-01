@@ -963,6 +963,9 @@ window.openEditor = function () {
 // ===== ЗАКРЫТИЕ РЕДАКТОРА =====
 document.getElementById("exitEditorBtn").addEventListener("click", () => {
 
+    objectsPanel.style.display = "none";
+objectsBtn.style.display = "none";
+
     document.exitPointerLock();
 
     if (renderer) {
@@ -993,7 +996,9 @@ closeObjects.addEventListener("click", () => {
 
 // ===== INIT 3D =====
 function init3D() {
-    cubeCounter = 0;
+    const objectsList = document.getElementById("objectsList");
+objectsList.innerHTML = "";
+cubeCounter = 0;
 
     scene = new THREE.Scene();
 
@@ -1089,9 +1094,6 @@ const objectsList = document.getElementById("objectsList");
     `;
 
     objectsList.appendChild(item);
-
-    const objectsList = document.getElementById("objectsList");
-objectsList.innerHTML = "";
 });
 
     // ===== POINTER LOCK =====
@@ -1201,6 +1203,7 @@ function animate() {
 </div>
 </body>
 </html>
+
 
 
 
