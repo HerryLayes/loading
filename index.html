@@ -877,16 +877,20 @@ window.logoutUser = async function() {
     location.reload();
 };
 
+
+// ===== 3D ПЕРЕМЕННЫЕ =====
 let scene, camera, renderer;
 let moveForward = false;
 let moveBackward = false;
 let moveLeft = false;
 let moveRight = false;
 let isPointerLocked = false;
-let raycaster = new THREE.Raycaster();
-let direction = new THREE.Vector3();
 
-window.openEditor = function() {
+let yaw = 0;
+let pitch = 0;
+
+// ===== ОТКРЫТИЕ РЕДАКТОРА =====
+window.openEditor = function () {
 
     document.getElementById("editor3d").style.display = "block";
     document.getElementById("editorUI").style.display = "block";
@@ -895,32 +899,26 @@ window.openEditor = function() {
     document.querySelector(".create-card").style.display = "none";
     document.querySelector(".nickname").style.display = "none";
 
-    document.getElementById("editor3d").style.display = "block";
-
     init3D();
-}
+};
 
-
+// ===== ЗАКРЫТИЕ РЕДАКТОРА =====
 document.getElementById("exitEditorBtn").addEventListener("click", () => {
 
-    // Останавливаем pointer lock если включен
     document.exitPointerLock();
 
-    // Удаляем canvas
     if (renderer) {
         renderer.domElement.remove();
     }
 
-    // Скрываем редактор
     document.getElementById("editor3d").style.display = "none";
     document.getElementById("editorUI").style.display = "none";
 
-    // Показываем главный экран платформы
     document.querySelector(".create-card").style.display = "flex";
     document.querySelector(".nickname").style.display = "flex";
-
 });
 
+// ===== INIT 3D =====
 function init3D() {
 
     scene = new THREE.Scene();
@@ -938,36 +936,11 @@ function init3D() {
     camera.updateProjectionMatrix();
 
     // ===== НЕБО =====
-    const skyMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            topColor: { value: new THREE.Color(0x87CEEB) },
-            bottomColor: { value: new THREE.Color(0xffffff) },
-            offset: { value: 33 },
-            exponent: { value: 0.6 }
-        },
-        vertexShader: `
-            varying vec3 vWorldPosition;
-            void main() {
-                vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-                vWorldPosition = worldPosition.xyz;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-        `,
-        fragmentShader: `
-            uniform vec3 topColor;
-            uniform vec3 bottomColor;
-            uniform float offset;
-            uniform float exponent;
-            varying vec3 vWorldPosition;
-            void main() {
-                float h = normalize(vWorldPosition + offset).y;
-                gl_FragColor = vec4(mix(bottomColor, topColor, pow(max(h, 0.0), exponent)), 1.0);
-            }
-        `,
+    const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+    const skyMaterial = new THREE.MeshBasicMaterial({
+        color: 0x87CEEB,
         side: THREE.BackSide
     });
-
-    const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
     const sky = new THREE.Mesh(skyGeometry, skyMaterial);
     scene.add(sky);
 
@@ -987,12 +960,12 @@ function init3D() {
         const direction = new THREE.Vector3();
         camera.getWorldDirection(direction);
 
-        const distance = 3;
-        const position = camera.position.clone().add(direction.multiplyScalar(distance));
+        const position = camera.position.clone().add(direction.multiplyScalar(3));
 
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshStandardMaterial({ color: 0x888888 });
-        const cube = new THREE.Mesh(geometry, material);
+        const cube = new THREE.Mesh(
+            new THREE.BoxGeometry(1, 1, 1),
+            new THREE.MeshStandardMaterial({ color: 0x888888 })
+        );
 
         cube.position.copy(position);
         scene.add(cube);
@@ -1003,85 +976,18 @@ function init3D() {
         renderer.domElement.requestPointerLock();
     });
 
+    document.addEventListener("pointerlockchange", () => {
+        isPointerLocked = document.pointerLockElement === renderer.domElement;
+    });
+
+    document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("keyup", onKeyUp);
-    document.addEventListener("mousemove", onMouseMove);
 
     animate();
 }
 
-// 🌤 НЕБО (правильный порядок)
-const skyMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-        topColor: { value: new THREE.Color(0x87CEEB) },
-        bottomColor: { value: new THREE.Color(0xffffff) },
-        offset: { value: 33 },
-        exponent: { value: 0.6 }
-    },
-    vertexShader: `
-        varying vec3 vWorldPosition;
-        void main() {
-            vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-            vWorldPosition = worldPosition.xyz;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-    `,
-    fragmentShader: `
-        uniform vec3 topColor;
-        uniform vec3 bottomColor;
-        uniform float offset;
-        uniform float exponent;
-        varying vec3 vWorldPosition;
-        void main() {
-            float h = normalize(vWorldPosition + offset).y;
-            gl_FragColor = vec4(mix(bottomColor, topColor, pow(max(h, 0.0), exponent)), 1.0);
-        }
-    `,
-    side: THREE.BackSide
-});
-
-const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
-const sky = new THREE.Mesh(skyGeometry, skyMaterial);
-scene.add(sky);
-
-const light = new THREE.HemisphereLight(0xffffff, 0x444444);
-scene.add(light);
-
-document.addEventListener("keydown", onKeyDown);
-document.addEventListener("keyup", onKeyUp);
-document.addEventListener("mousemove", onMouseMove);
-
-renderer.domElement.addEventListener("click", () => {
-    renderer.domElement.requestPointerLock();
-});
-
-
-// Открытие панели объектов
-document.getElementById("objectsBtn").addEventListener("click", () => {
-
-    document.getElementById("objectsPanel").style.display = "block";
-
-    // Скрываем кнопку выхода
-    document.getElementById("editorUI").style.display = "none";
-});
-
-// Закрытие панели
-document.getElementById("closeObjects").addEventListener("click", () => {
-
-    document.getElementById("objectsPanel").style.display = "none";
-
-    // Возвращаем кнопку выхода
-    document.getElementById("editorUI").style.display = "block";
-});
-}
-       
-let yaw = 0;
-let pitch = 0;
-
-document.addEventListener("pointerlockchange", () => {
-    isPointerLocked = document.pointerLockElement === renderer.domElement;
-});
-
+// ===== МЫШЬ =====
 function onMouseMove(event) {
 
     if (!isPointerLocked) return;
@@ -1096,6 +1002,7 @@ function onMouseMove(event) {
     camera.rotation.x = pitch;
 }
 
+// ===== КЛАВИАТУРА =====
 function onKeyDown(event) {
     if (event.code === "KeyW") moveForward = true;
     if (event.code === "KeyS") moveBackward = true;
@@ -1103,8 +1010,8 @@ function onKeyDown(event) {
     if (event.code === "KeyD") moveRight = true;
 
     if (event.code === "Escape") {
-    document.exitPointerLock();
-    }  
+        document.exitPointerLock();
+    }
 }
 
 function onKeyUp(event) {
@@ -1114,6 +1021,7 @@ function onKeyUp(event) {
     if (event.code === "KeyD") moveRight = false;
 }
 
+// ===== ANIMATE =====
 function animate() {
     requestAnimationFrame(animate);
 
@@ -1125,8 +1033,6 @@ function animate() {
     if (moveRight) camera.translateX(speed);
 
     renderer.render(scene, camera);
-
-    
 }
        
 </script>
@@ -1172,6 +1078,7 @@ function animate() {
 </div>
 </body>
 </html>
+
 
 
 
