@@ -643,6 +643,19 @@
 
     <div class="objects-list" id="objectsList"></div>
 
+    <!-- ===== Профиль ===== -->
+<div id="profilePage" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:white; z-index:30; padding:60px;">
+
+    <h1 id="profileTitle">Профиль</h1>
+
+    <h2 id="profileNickname" style="margin-top:20px;"></h2>
+
+    <button onclick="goHome()" style="margin-top:40px; padding:10px 20px; border:none; border-radius:10px; background:#3c4b57; color:white; cursor:pointer;">
+        ⬅ Назад
+    </button>
+
+</div>
+
 </div>
 
     <div id="editorUI" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; z-index:10;">
@@ -662,7 +675,7 @@
     </div>
 
     <div class="nickname">
-        <span id="nickname"></span>
+        <span id="nickname" style="cursor:pointer;"></span>
         <button class="settings-btn" onclick="openSettings()">⚙</button>
     </div>
 
@@ -949,6 +962,15 @@ window.logoutUser = async function() {
     currentUser = null;
 
     document.getElementById("nickname").innerText = "Гость";
+
+    // ===== Переход в профиль =====
+document.getElementById("nickname").addEventListener("click", () => {
+
+    if (!currentUser) return;
+
+    window.location.href = window.location.pathname + "?user=" + currentUser.uid;
+
+});
 
     closeSettings();
 
@@ -1243,7 +1265,14 @@ window.confirmExit = function(save) {
 
 
 
+// ===== Назад на главную =====
+window.goHome = function() {
 
+    window.history.pushState({}, "", window.location.pathname);
+    document.getElementById("profilePage").style.display = "none";
+
+};
+       
 
 
 
@@ -1261,6 +1290,51 @@ function animate() {
 
     renderer.render(scene, camera);
 }
+
+
+
+
+
+
+
+// ===== Проверка параметра ?user= =====
+async function checkProfilePage() {
+
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("user");
+
+    if (!userId) return;
+
+    document.getElementById("profilePage").style.display = "block";
+
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+        document.getElementById("profileTitle").innerText = "Пользователь не найден";
+        return;
+    }
+
+    const nickname = userSnap.data().nickname;
+
+    document.getElementById("profileNickname").innerText = nickname;
+
+    if (currentUser && currentUser.uid === userId) {
+        document.getElementById("profileTitle").innerText = "Мой профиль";
+    } else {
+        document.getElementById("profileTitle").innerText = "Профиль автора";
+    }
+}
+
+// Запускаем после загрузки
+setTimeout(checkProfilePage, 500);
+
+
+
+
+
+
+       
        
 </script>
     <div id="authModal" class="modal">
@@ -1323,6 +1397,7 @@ function animate() {
 </div>
 </body>
 </html>
+
 
 
 
