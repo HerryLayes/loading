@@ -1363,6 +1363,45 @@ if (profileBtn) {
 
 
 
+       // проверяем есть ли user в ссылке
+const params = new URLSearchParams(window.location.search);
+const profileUser = params.get("user");
+
+if (profileUser) {
+
+    // скрываем главную платформу
+    document.getElementById("platformPage").style.display = "none";
+
+    // показываем профиль
+    document.getElementById("profilePage").style.display = "block";
+
+    loadProfile(profileUser);
+
+}
+
+async function loadProfile(uid){
+
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+
+    if(!docSnap.exists()) return;
+
+    const data = docSnap.data();
+
+    document.getElementById("profileNickname").innerText = data.nickname;
+    document.getElementById("profileUID").innerText = uid;
+
+    // определяем чей профиль
+    if(currentUser && currentUser.uid === uid){
+        document.getElementById("profileTitle").innerText = "Мой профиль";
+    } else {
+        document.getElementById("profileTitle").innerText = "Профиль автора";
+    }
+
+}
+
+
+
 
        
        
@@ -1425,8 +1464,51 @@ if (profileBtn) {
     </div>
 
 </div>
+
+
+
+    <div id="profilePage" style="
+display:none;
+background:white;
+min-height:100vh;
+padding:40px;
+font-family:sans-serif;
+">
+
+<h1 id="profileTitle">Профиль</h1>
+
+<div style="
+margin-top:20px;
+font-size:20px;
+background:#f2f2f2;
+padding:20px;
+border-radius:12px;
+max-width:400px;
+">
+
+<p><b>Ник:</b> <span id="profileNickname"></span></p>
+<p><b>ID игрока:</b> <span id="profileUID"></span></p>
+
+</div>
+
+<br>
+
+<button onclick="goHome()" style="
+padding:10px 18px;
+border:none;
+border-radius:10px;
+background:#3c4b57;
+color:white;
+cursor:pointer;
+font-size:16px;
+">
+⬅ Назад
+</button>
+
+</div>
 </body>
 </html>
+
 
 
 
