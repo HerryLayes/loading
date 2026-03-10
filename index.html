@@ -589,24 +589,6 @@
     transform: scale(1.03);
 }
 
-
-
-
-
-
-        #profileBtn{
-    position:absolute;
-    top:20px;
-    right:200px;
-    font-size:22px;
-    background:#3c4b57;
-    color:white;
-    border:none;
-    border-radius:10px;
-    padding:8px 12px;
-    cursor:pointer;
-}
-
     </style>
 </head>
 <body>
@@ -662,8 +644,6 @@
     <div class="objects-list" id="objectsList"></div>
 
     <!-- ===== Профиль ===== -->
-<div id="profilePage" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:white; z-index:30; padding:60px;">
-
     <h1 id="profileTitle">Профиль</h1>
 
     <h2 id="profileNickname" style="margin-top:20px;"></h2>
@@ -1349,15 +1329,14 @@ if (profileBtn) {
 
     profileBtn.addEventListener("click", () => {
 
-        if (!currentUser) {
-            document.getElementById("authModal").style.display = "flex";
-            return;
-        }
+    if (!currentUser) {
+        document.getElementById("authModal").style.display = "flex";
+        return;
+    }
 
-        window.location.href =
-"https://herrylayes.github.io/?user=" + currentUser.uid;
+    openMyProfile();
 
-    });
+});
 
 }
 
@@ -1370,7 +1349,7 @@ const profileUser = params.get("user");
 if (profileUser) {
 
     // скрываем главную платформу
-    document.getElementById("platformPage").style.display = "none";
+    document.getElementById("platformScreen").style.display = "none";
 
     // показываем профиль
     document.getElementById("profilePage").style.display = "block";
@@ -1399,6 +1378,23 @@ async function loadProfile(uid){
     }
 
 }
+
+
+       function openMyProfile(){
+
+    document.getElementById("platformScreen").style.display = "none";
+    document.getElementById("profilePage").style.display = "block";
+
+    document.getElementById("profileTitle").innerText = "Мой профиль";
+    document.getElementById("profileNickname").innerText =
+        document.getElementById("nickname").innerText;
+
+    document.getElementById("profileUID").innerText =
+        currentUser.uid;
+
+}
+
+       document.getElementById("nickname").addEventListener("click", openMyProfile);
 
 
 
@@ -1508,6 +1504,7 @@ font-size:16px;
 </div>
 </body>
 </html>
+
 
 
 
