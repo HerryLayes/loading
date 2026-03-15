@@ -715,18 +715,6 @@
 
 </div>
 
-        <div id="profileScreen" class="profile-screen">
-
-    <div class="profile-nickname" id="profileNickname">
-        Herrybloxer
-    </div>
-
-    <div class="profile-id" id="profileId"></div>
-
-    <button class="back-btn" onclick="goBack()">← Назад</button>
-
-</div>
-
    <script type="module">
 
 let cubeCounter = 0;
@@ -872,7 +860,7 @@ window.editNickname = function() {
         const userRef = doc(db, "users", currentUser.uid);
         updateDoc(userRef, { nickname: newNick });
         const nicknameElement = document.getElementById("nickname");
-nicknameElement.innerHTML = newNick;
+nicknameElement.innerText = newNick;
 
 if (currentUser.uid === "qnevdFJhd1Q9FvjOp2t4GBT95pp1") {
     nicknameElement.innerHTML += ` <img src="tick.png" class="verified">`;
@@ -1104,8 +1092,6 @@ scene.add(dirLight);
     window.addEventListener("resize", () => {
 
     const container = document.getElementById("editor3d");
-
-    container.innerHTML = "";
 
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
@@ -1371,7 +1357,8 @@ page.style.display = "block";
     document.getElementById("profileNickname").innerText = nickname;
 
     if (currentUser && currentUser.uid === userId) {
-        document.getElementById("profileTitle").innerText = "Мой профиль";
+        const title = document.getElementById("profileTitle");
+        if(title) title.innerText = "Мой профиль";
     } else {
         document.getElementById("profileTitle").innerText = "Профиль автора";
     }
