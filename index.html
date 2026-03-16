@@ -1443,8 +1443,9 @@ async function loadProfile(uid){
     const platform = document.getElementById("platformScreen");
     const profile = document.getElementById("profilePage");
 
-    // скрываем платформу правильно
+    // полностью скрываем платформу
     platform.classList.remove("active");
+    platform.style.display = "none";
 
     // показываем профиль
     profile.style.display = "block";
@@ -1464,12 +1465,16 @@ async function loadProfile(uid){
 
 
 
-       function goHome(){
+      function goHome(){
 
-    document.getElementById("profilePage").style.display = "none";
+    const platform = document.getElementById("platformScreen");
+    const profile = document.getElementById("profilePage");
+
+    profile.style.display = "none";
 
     // возвращаем платформу
-    document.getElementById("platformScreen").classList.add("active");
+    platform.style.display = "block";
+    platform.classList.add("active");
 
 }
        
@@ -1536,34 +1541,27 @@ async function loadProfile(uid){
 
 
 
-    <div id="profilePage" style="
-display:none;
-background:white;
-min-height:100vh;
-padding:40px;
-font-family:sans-serif;
-">
+<div id="profilePage">
 
-<h1 id="profileTitle">Профиль</h1>
+<h1 id="profileNickname" style="
+text-align:center;
+margin-top:60px;
+font-size:48px;
+font-weight:bold;
+font-family:'Poppins',sans-serif;
+"></h1>
 
-<div style="
-margin-top:20px;
-font-size:20px;
-background:#f2f2f2;
-padding:20px;
-border-radius:12px;
-max-width:400px;
-">
-
-<p><b>Ник:</b> <span id="profileNickname"></span></p>
-<p><b>ID игрока:</b> <span id="profileUID"></span></p>
-
-</div>
-
-<br>
+<p id="profileUID" style="
+text-align:center;
+margin-top:10px;
+color:#777;
+font-size:14px;
+"></p>
 
 <button onclick="goHome()" style="
-
+position:absolute;
+top:20px;
+left:20px;
 padding:10px 18px;
 border:none;
 border-radius:10px;
